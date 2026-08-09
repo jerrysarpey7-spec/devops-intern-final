@@ -1,0 +1,5 @@
+docker run -d --name loki -p 3100:3100 grafana/loki:3.0.0
+curl http://localhost:3100/ready
+docker run -d --name grafana -p 3000:3000 grafana/grafana
+Add Loki as a data source in Grafana
+Query: {container="devops-hello"}
