@@ -44,7 +44,7 @@ User: amrad
 Date: Sun Aug 9 20:45:47 EDT 2026
 Filesystem      Size    Used    Avail   Capacity iused   ifree   %iused  Mounted on
 ...
-![alt text](<Image 8-9-26 at 10.23 PM.png>)
+
 
 
 Python Application
