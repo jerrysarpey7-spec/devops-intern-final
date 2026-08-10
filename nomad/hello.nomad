@@ -8,7 +8,7 @@ job "hello-devops" {
     task "hello-task" {
       driver = "docker"
       config {
-        image = "devops-hello:latest"
+        image = "devops-hello:v1"
       }
       resources {
         cpu    = 100
