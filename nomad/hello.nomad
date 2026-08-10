@@ -5,10 +5,9 @@ job "hello-devops" {
   group "hello-group" {
     count = 1
 
-    # 1. Add this network block
     network {
       port "http" {
-        to = 8080 # The port your app listens on internally
+        to = 8080
       }
     }
 
@@ -16,10 +15,15 @@ job "hello-devops" {
       driver = "docker"
 
       config {
-        image = "devops-hello:v1"
-        
-        # 2. Tell Docker to use the port defined above
-        ports = ["http"] 
+        image      = "devops-hello:v1"
+        force_pull = false
+
+        ports = ["http"]
+      }
+
+      logs {
+        max_files     = 10
+        max_file_size = "10MB"
       }
 
       resources {
