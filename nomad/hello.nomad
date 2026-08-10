@@ -22,7 +22,7 @@ job "hello-devops" {
 
       logs {
         max_files     = 10
-        max_file_size = "10MB"
+        max_file_size = 10
       }
 
       resources {
