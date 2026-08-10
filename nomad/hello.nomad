@@ -17,8 +17,7 @@ job "hello-devops" {
       config {
         image      = "devops-hello:v1"
         force_pull = false
-
-        ports = ["http"]
+        ports      = ["http"]
       }
 
       logs {
