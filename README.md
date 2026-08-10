@@ -23,6 +23,7 @@ devops-intern-final/
     └── workflows/
         └── ci.yml
 
+
 Linux System Info Script
 
 The sysinfo.sh script prints:
@@ -73,11 +74,9 @@ docker run --rm devops-hello
 
 Expected output:
 
-![alt text](<Dooker run output.png>)
-
 Hello, DevOps!
 
-⚙️ GitHub Actions CI/CD Pipeline
+GitHub Actions CI/CD Pipeline
 
 Located at .github/workflows/ci.yml, this workflow:
 
@@ -105,9 +104,7 @@ Status: Success
 
 Duration: 15s
 
-
-
-📦 Nomad Deployment
+Nomad Deployment
 
 The Nomad job (nomad/hello.nomad) defines how the Python service is scheduled and deployed.
 
@@ -126,7 +123,7 @@ Run the job:
 
 nomad job run nomad/hello.nomad
 
-✓ Deployment successful
+Deployment successful
 Healthy = 1
 Unhealthy = 0
 
@@ -138,7 +135,7 @@ Hello, DevOps!
 Hello, DevOps!
 Hello, DevOps!
 
-📊 Monitoring with Grafana Loki
+Monitoring with Grafana Loki
 Loki is used for log aggregation and querying.
 
 Steps Performed
@@ -214,6 +211,7 @@ Screenshots for verification
 Everything has been tested end‑to‑end and validated successfully.
 
 Project Checklist (Completed)
+
 [x] README.md with full documentation
 
 [x] scripts/sysinfo.sh
