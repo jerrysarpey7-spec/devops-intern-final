@@ -1,237 +1,340 @@
-# DevOps Intern Final Assessment – Springer Capital
-Name: Jerry Sarpey
-Date: August 7, 2026
+# DevOps Intern Final Assessment — Springer Capital
 
-This repository implements a realistic DevOps workflow using Linux, GitHub, Docker, CI/CD, Nomad, and Grafana Loki.
+**Candidate:** Jerry Sarpey  
+**Submission date:** August 7, 2026  
+**Status:** Completed
 
-Repository Structure
+## Project Overview
 
+This repository demonstrates a complete DevOps workflow built with Linux, GitHub Actions, Docker, HashiCorp Nomad, and Grafana Loki. It includes system automation, application containerization, continuous integration, workload orchestration, centralized logging, and supporting evidence.
+
+## Technology Stack
+
+| Area | Technology |
+| --- | --- |
+| Operating system and scripting | Linux and Bash |
+| Application | Python 3.11 |
+| Version control | Git and GitHub |
+| Containerization | Docker |
+| Continuous integration | GitHub Actions |
+| Workload orchestration | HashiCorp Nomad |
+| Log aggregation | Grafana Loki |
+
+## Repository Structure
+
+```text
 devops-intern-final/
-├── Dockerfile
-├── hello.py
-├── scripts/
-│   └── sysinfo.sh
-├── nomad/
-│   └── hello.nomad
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── images/
+│   ├── cicd.png
+│   ├── docker-run.png
+│   ├── loki.png
+│   ├── nomad.png
+│   └── sysinfo.png
 ├── monitoring/
 │   └── loki_setup.txt
-├── images/
-│   ├── nomad.png
-│   ├── loki.png
-│   └── cicd.png
-└── .github/
-    └── workflows/
-        └── ci.yml
+├── nomad/
+│   └── hello.nomad
+├── scripts/
+│   └── sysinfo.sh
+├── Dockerfile
+├── README.md
+└── hello.py
+```
 
+## Prerequisites
 
-Linux System Info Script
+To run the complete project locally, install:
 
-The sysinfo.sh script prints:
+- Git
+- Python 3.11 or later
+- Docker
+- HashiCorp Nomad
+- `curl`
 
-Current user
+## 1. Linux System Information Script
 
-Date
+The [`scripts/sysinfo.sh`](scripts/sysinfo.sh) script displays:
 
-Filesystem usage
+- Current user
+- Current date and time
+- Filesystem usage
+- Mounted volumes
 
-Mounted volumes
+Make the script executable and run it:
 
-Run it:
+```bash
 chmod +x scripts/sysinfo.sh
 ./scripts/sysinfo.sh
+```
 
+Example output:
+
+```text
 === System Info ===
 User: amrad
 Date: Sun Aug 9 20:45:47 EDT 2026
-Filesystem      Size    Used    Avail   Capacity iused   ifree   %iused  Mounted on
+
+Filesystem      Size    Used   Avail Capacity  Mounted on
 ...
+```
 
+![Linux system information output](images/sysinfo.png)
 
+## 2. Python Application
 
-Python Application
+[`hello.py`](hello.py) is a lightweight Python application used as the workload throughout the CI, containerization, deployment, and monitoring stages.
 
-A simple Python script (hello.py) used as the workload for CI/CD and container deployment.
+Run it locally:
 
-🐳 Docker Containerization
+```bash
+python3 hello.py
+```
 
-The project includes a minimal Dockerfile:
+Expected output:
 
+```text
+Hello, DevOps!
+```
+
+## 3. Docker Containerization
+
+The project uses the following minimal [`Dockerfile`](Dockerfile):
+
+```dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
-
 COPY . /app
 
 CMD ["python3", "hello.py"]
+```
 
 Build the image:
 
-docker build -t devops-hello .
+```bash
+docker build -t devops-hello:v1 .
+```
 
 Run the container:
 
-docker run --rm devops-hello
+```bash
+docker run --rm devops-hello:v1
+```
 
 Expected output:
 
+```text
 Hello, DevOps!
+```
 
-GitHub Actions CI/CD Pipeline
+![Docker container output](images/docker-run.png)
 
-Located at .github/workflows/ci.yml, this workflow:
+## 4. GitHub Actions CI Pipeline
 
-Checks out the repository
+The workflow at [`.github/workflows/ci.yml`](.github/workflows/ci.yml) automatically:
 
-Sets up Python
+1. Checks out the repository.
+2. Configures the required Python version.
+3. Runs the Python application.
+4. Confirms that the application completes successfully.
 
-Runs the application
+The workflow runs whenever its configured GitHub event is triggered. To test it with a push:
 
-Triggering CI/CD
-Make a change:
-
-print("Hello, DevOps Intern!")
-
-Commit and push:
-
+```bash
 git add .
 git commit -m "Trigger CI pipeline"
 git push
+```
 
-CI/CD Result
-Workflow: Trigger CI pipeline #3
+### Verified Result
 
-Status: Success
+| Item | Result |
+| --- | --- |
+| Workflow run | Trigger CI pipeline #3 |
+| Status | Success |
+| Duration | 15 seconds |
 
-Duration: 15s
+![Successful GitHub Actions workflow](images/cicd.png)
 
-Nomad Deployment
+## 5. Nomad Deployment
 
-The Nomad job (nomad/hello.nomad) defines how the Python service is scheduled and deployed.
+The Nomad job specification at [`nomad/hello.nomad`](nomad/hello.nomad) defines how the containerized Python workload is scheduled and deployed.
 
-Key Features
-Runs Docker image devops-hello:v1
+### Job Features
 
-Allocates CPU & memory
+- Runs the local `devops-hello:v1` Docker image
+- Allocates CPU and memory resources
+- Exposes port `8080`
+- Captures allocation logs
+- Uses the local image with `force_pull = false`
 
-Exposes port 8080
+Start a local Nomad development agent in one terminal:
 
-Captures logs
+```bash
+nomad agent -dev
+```
 
-Uses local Docker image (force_pull = false)
+In another terminal, submit the job:
 
-Run the job:
-
+```bash
 nomad job run nomad/hello.nomad
+```
 
-Deployment successful
-Healthy = 1
+Check its status:
+
+```bash
+nomad job status <job-name>
+```
+
+Verified deployment result:
+
+```text
+Healthy   = 1
 Unhealthy = 0
+```
 
-View logs:
+View the allocations and stream the application logs:
 
-nomad alloc logs -f a6ddebb2
+```bash
+nomad job allocs <job-name>
+nomad alloc logs -f <allocation-id>
+```
 
+Expected log output:
+
+```text
 Hello, DevOps!
 Hello, DevOps!
 Hello, DevOps!
+```
 
-Monitoring with Grafana Loki
-Loki is used for log aggregation and querying.
+![Healthy Nomad deployment](images/nomad.png)
 
-Steps Performed
-Started Loki using Docker
+> **Note:** Nomad development mode is intended for local testing and should not be used for production workloads.
 
-Installed Loki Docker logging plugin
+## 6. Monitoring with Grafana Loki
 
-Forwarded container logs
+Grafana Loki provides centralized log aggregation and LogQL-based querying for the Docker workload. The complete setup notes are documented in [`monitoring/loki_setup.txt`](monitoring/loki_setup.txt).
 
-Queried logs using LogQL
+### Implementation Steps
 
-Documented everything in monitoring/loki_setup.txt
+1. Started Loki as a Docker container.
+2. Installed the Loki Docker logging driver.
+3. Configured the application container to forward its logs to Loki.
+4. Queried the collected logs with LogQL.
+5. Saved the setup and validation procedure.
 
-Verify logs:
+Start Loki:
 
-curl -G -s "http://localhost:3100/loki/api/v1/query" \
---data-urlencode 'query={container_name="devops-hello-loki"}'
+```bash
+docker run -d \
+  --name loki \
+  -p 3100:3100 \
+  grafana/loki:2.9.2 \
+  -config.file=/etc/loki/local-config.yaml
+```
 
-Expected output:
+Install the Docker logging driver:
 
+```bash
+docker plugin install grafana/loki-docker-driver:latest \
+  --alias loki \
+  --grant-all-permissions
+```
+
+Run the application and forward its logs to Loki:
+
+```bash
+docker run -d \
+  --name devops-hello-loki \
+  --log-driver=loki \
+  --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
+  devops-hello:v1
+```
+
+Query the logs:
+
+```bash
+curl -G -s "http://localhost:3100/loki/api/v1/query_range" \
+  --data-urlencode 'query={container_name="devops-hello-loki"}' \
+  --data-urlencode 'limit=20'
+```
+
+Expected application messages:
+
+```text
 Hello, DevOps!
 Hello, DevOps!
 Hello, DevOps!
+```
 
-How to Run Everything (Quick Start)
+![Application logs collected by Loki](images/loki.png)
 
-1. Linux Script
+## Quick Start
+
+Clone the repository and enter the project directory:
+
+```bash
+git clone <repository-url>
+cd devops-intern-final
+```
+
+Run the Linux script:
+
+```bash
 chmod +x scripts/sysinfo.sh
 ./scripts/sysinfo.sh
+```
 
-2. Docker
+Build and test the container:
 
-docker build -t devops-hello .
-docker run --rm devops-hello
+```bash
+docker build -t devops-hello:v1 .
+docker run --rm devops-hello:v1
+```
 
-3. CI/CD
+Start Nomad and deploy the workload:
 
-git add .
-git commit -m "Trigger CI pipeline"
-git push
-
-4. Nomad
+```bash
 nomad agent -dev
 nomad job run nomad/hello.nomad
-nomad alloc logs -f <alloc-id>
+nomad job status <job-name>
+```
 
-5. Loki
+Follow the [monitoring procedure](monitoring/loki_setup.txt) to start Loki and validate centralized logging.
 
-docker run -d --name loki -p 3100:3100 grafana/loki:2.9.2 -config.file=/etc/loki/local-config.yaml
-docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
-docker run -d --log-driver=loki --log-opt loki-url="http://localhost:3100/loki/api/v1/push" --name devops-hello-loki devops-hello:v1
+## Validation Summary
 
+The workflow was tested end to end with the following results:
 
-Final Deliverable Summary
+| Component | Validation | Status |
+| --- | --- | --- |
+| Linux script | System information displayed successfully | Completed |
+| Python application | Expected message returned | Completed |
+| Docker | Image built and container ran successfully | Completed |
+| GitHub Actions | CI workflow completed successfully | Completed |
+| Nomad | Allocation reported healthy | Completed |
+| Grafana Loki | Application logs were ingested and queried | Completed |
+| Documentation | Setup steps and screenshots were added | Completed |
 
-Final Deliverable Summary
-This repository contains all required components for the DevOps Intern Final Assessment:
+## Project Checklist
 
-Linux scripting
+- [x] `README.md` with complete documentation
+- [x] `scripts/sysinfo.sh`
+- [x] `Dockerfile`
+- [x] `.github/workflows/ci.yml`
+- [x] `nomad/hello.nomad`
+- [x] `monitoring/loki_setup.txt`
+- [x] Docker image built and tested
+- [x] CI workflow triggered and passed
+- [x] Nomad job deployed and healthy
+- [x] Loki logs verified
+- [x] Validation screenshots added
+- [x] Final deliverable completed
 
-Docker containerization
+## Final Deliverable
 
-CI/CD pipeline
-
-Nomad deployment
-
-Monitoring with Grafana Loki
-
-Full documentation
-
-Screenshots for verification
-
-Everything has been tested end‑to‑end and validated successfully.
-
-Project Checklist (Completed)
-
-[x] README.md with full documentation
-
-[x] scripts/sysinfo.sh
-
-[x] Dockerfile
-
-[x] .github/workflows/ci.yml
-
-[x] nomad/hello.nomad
-
-[x] monitoring/loki_setup.txt
-
-[x] Nomad job running and healthy
-
-[x] Loki logs verified
-
-[x] CI/CD pipeline triggered and passed
-
-[x] Docker image built and running
-
-[x] Screenshots added
-
-[x] Final deliverable complete
+This repository contains all required components for the Springer Capital DevOps Intern Final Assessment. It demonstrates practical experience with Linux scripting, Docker containerization, CI automation, Nomad orchestration, centralized logging, technical validation, and clear operational documentation.
