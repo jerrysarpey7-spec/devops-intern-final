@@ -128,8 +128,6 @@ Expected output:
 Hello, DevOps!
 ```
 
-![Docker container output](images/docker-run.png)
-
 ## 4. GitHub Actions CI Pipeline
 
 The workflow at [`.github/workflows/ci.yml`](.github/workflows/ci.yml) automatically:
