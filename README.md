@@ -1,4 +1,4 @@
-# DevOps Intern Final Assessment — Springer Capital
+# End-to-End DevOps Automation and Observability Platform
 
 **Candidate:** Jerry Sarpey  
 **Submission date:** August 7, 2026  
