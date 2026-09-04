@@ -81,8 +81,6 @@ Filesystem      Size    Used   Avail Capacity  Mounted on
 ...
 ```
 
-![Linux system information output](images/sysinfo.png)
-
 ## 2. Python Application
 
 [`hello.py`](hello.py) is a lightweight Python application used as the workload throughout the CI, containerization, deployment, and monitoring stages.
